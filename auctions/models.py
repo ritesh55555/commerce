@@ -7,17 +7,18 @@ from django.db.models.fields import related
 from django.db.models.fields.related import ForeignKey
 
 
-class User(AbstractUser):
-    pass
-
 class Listing(models.Model):
     title = models.CharField(max_length=64)
     details = models.TextField(default='')
     price = models.IntegerField()
     owner = models.CharField(max_length=64)
+    buyer = models.CharField(max_length=64 , default="none")
 
     def __str__(self):
         return f"{self.title}"
+
+class User(AbstractUser):
+    pass
 
 class Comment(models.Model):
     item = models.ForeignKey(Listing , on_delete=models.CASCADE , related_name="comments")

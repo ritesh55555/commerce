@@ -9,7 +9,7 @@ from .models import User , Listing
 
 def index(request):
     if request.method == "POST" :
-        listing = Listing(title=request.POST['title'] , details=request.POST['details'] , price=int(request.POST['price']) , owner=request.user.username )
+        listing = Listing(title=request.POST['title'] , details=request.POST['details'] , price=int(request.POST['price']) , owner=request.user.username ,buyer ="none")
         listing.save()
 
     return render(request, "auctions/index.html" , {
@@ -23,10 +23,18 @@ def bid(request , listing_id ):
     listing = Listing.objects.get(id=listing_id)
 
     if request.method == "POST" :
-        print(int(request.POST['price']))
-        if int(request.POST['price']) > listing.price :
-            listing.price = int(request.POST['price'])
-            listing.save()
+        print(request.POST)
+        if 'remove' in request.POST :
+            listing.delete()
+            return render (request , "auctions/index.html" , {
+                "listings" : Listing.objects.all()
+            })
+        
+        if 'bid' in request.POST :
+            if int(request.POST['price']) > listing.price :
+                listing.price = int(request.POST.get('price' , False))
+                listing.buyer = request.user.username 
+                listing.save()     
 
     print(listing.price)
     return render (request , "auctions/bid.html" , {

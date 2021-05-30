@@ -4,14 +4,52 @@
     <h2>Active Listings</h2>
 
         {% for listing in listings %}
+            <div style="background-color: rgb(220, 235, 255); margin: 30px; padding: 5px;">
             <ul>
-                <li>{{listing.title}}</li>
-                <li>{{listing.details}}</li>
-                <li>$ {{listing.price}}</li>
-                <li><form action="{% url 'bid' listing.id %}">
-                    <input class="btn btn-primary" type="submit" value="Bid" style="height: 35px;">
-                    </form>
-                </li>
-            </ul>    
+                {% if user.is_authenticated %}
+
+                    {% if listing.owner == user.username %} 
+                        <h5>Your item</h5>
+                    {% endif %}
+                {% endif %}
+                <li><strong>{{listing.title}}</strong></li>
+                <li>{{listing.details}}</li>  
+                <li><h6>Price : <span class="badge badge-secondary">$ {{listing.price}}</span></h6></li>
+                {% if user.is_authenticated %}
+
+                    {% if listing.owner == user.username %} 
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <form action="{% url 'bid' listing.id %}" method="post">
+                                {% csrf_token %}
+                                {% if listing.buyer != 'none'%}
+                                    <input class="btn btn-primary" type="submit" name="close" value="Sell" style="height: 35px;">
+                                {% endif%}
+                                <input class="btn btn-primary" type="submit" name="remove" value="Remove" style="height: 35px;">
+                                <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px; margin-left: 1050px;">
+                            </form>
+                        </div>
+                    {% else %}
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <form action="{% url 'bid' listing.id %}" method="post">
+                                {% csrf_token %}
+                                <input class="btn btn-primary" type="submit"  value="Bid" style="height: 35px;">
+                                <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px;margin-left: 1000px">
+                            </form>
+                        </div>
+                    {% endif %}
+
+                    {% if listing.buyer == 'none'%}
+                        <div>
+                            <strong>No bid on this item</strong>
+                        </div>
+                    {% elif listing.buyer == user.username %}
+                        <div>
+                            <strong>You are currently the highest bidder</strong>
+                        </div>
+                    {% endif%}
+
+                {% endif %}
+            </ul>
+            </div>    
         {% endfor %}
 {% endblock %}
