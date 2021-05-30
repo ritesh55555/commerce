@@ -8,6 +8,10 @@
                 <li>{{listing.title}}</li>
                 <li>{{listing.details}}</li>
                 <li>$ {{listing.price}}</li>
+                <li><form action="{% url 'bid' listing.id %}">
+                    <input class="btn btn-primary" type="submit" value="Bid" style="height: 35px;">
+                    </form>
+                </li>
             </ul>    
         {% endfor %}
 {% endblock %}

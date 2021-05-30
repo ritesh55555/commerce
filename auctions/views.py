@@ -19,6 +19,20 @@ def index(request):
 def create(request) :
     return render(request , "auctions/create.html")
 
+def bid(request , listing_id ):
+    listing = Listing.objects.get(id=listing_id)
+
+    if request.method == "POST" :
+        print(int(request.POST['price']))
+        if int(request.POST['price']) > listing.price :
+            listing.price = int(request.POST['price'])
+            listing.save()
+
+    print(listing.price)
+    return render (request , "auctions/bid.html" , {
+        "listing" : listing
+    })
+
 def login_view(request):
     if request.method == "POST":
 
