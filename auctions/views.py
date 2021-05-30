@@ -12,8 +12,12 @@ def index(request):
         listing = Listing(title=request.POST['title'] , details=request.POST['details'] , price=int(request.POST['price']) , owner=request.user.username ,buyer ="none")
         listing.save()
 
+    id_list = []
+    for i in Watchlist.objects.filter(name= request.user.username) :
+        id_list.append(i.item)
     return render(request, "auctions/index.html" , {
-        "listings": Listing.objects.all() 
+        "listings": Listing.objects.all() ,
+        "check" : id_list
     })
 
 def create(request) :
