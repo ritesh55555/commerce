@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User , Listing 
+from .models import User , Listing , Watchlist 
 
 
 def index(request):
@@ -13,7 +13,7 @@ def index(request):
         listing.save()
 
     return render(request, "auctions/index.html" , {
-        "listings": Listing.objects.all()
+        "listings": Listing.objects.all() 
     })
 
 def create(request) :
@@ -23,7 +23,6 @@ def bid(request , listing_id ):
     listing = Listing.objects.get(id=listing_id)
 
     if request.method == "POST" :
-        print(request.POST)
         if 'remove' in request.POST :
             listing.delete()
             return render (request , "auctions/index.html" , {
@@ -34,11 +33,33 @@ def bid(request , listing_id ):
             if int(request.POST['price']) > listing.price :
                 listing.price = int(request.POST.get('price' , False))
                 listing.buyer = request.user.username 
-                listing.save()     
+                listing.save()  
+
+        if 'add' in request.POST :
+            watchlist = Watchlist(name = request.user.username , item = listing_id)
+            watchlist.save()
+            return HttpResponseRedirect(reverse(index))
+
+        if 'rw' in request.POST :
+            for i in Watchlist.objects.all() :
+                if request.user.username == i.name and i.item == listing_id :
+                    watchlist = i
+            watchlist.delete()
+            return HttpResponseRedirect(reverse(index))
 
     print(listing.price)
     return render (request , "auctions/bid.html" , {
         "listing" : listing
+    })
+
+def watchlist(request):
+    list = [] 
+    for watchlist in Watchlist.objects.all() :
+        if request.user.username == watchlist.name :
+            list.append(Listing.objects.get(id=watchlist.item))
+
+    return render(request , "auctions/watchlist.html" , {
+        "listings" : list
     })
 
 def login_view(request):

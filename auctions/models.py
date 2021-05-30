@@ -4,7 +4,7 @@ from django.db.models.base import Model
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import CharField , IntegerField , TextField
 from django.db.models.fields import related
-from django.db.models.fields.related import ForeignKey
+from django.db.models.fields.related import ForeignKey, ManyToManyField
 
 
 class Listing(models.Model):
@@ -19,6 +19,10 @@ class Listing(models.Model):
 
 class User(AbstractUser):
     pass
+
+class Watchlist(models.Model):
+    name = models.CharField(max_length=64)
+    item = models.IntegerField()
 
 class Comment(models.Model):
     item = models.ForeignKey(Listing , on_delete=models.CASCADE , related_name="comments")
