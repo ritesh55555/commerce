@@ -13,6 +13,7 @@ class Listing(models.Model):
     price = models.IntegerField()
     owner = models.CharField(max_length=64)
     buyer = models.CharField(max_length=64 , default="none")
+    status = models.CharField(max_length=5 , default="false")
 
     def __str__(self):
         return f"{self.title}"

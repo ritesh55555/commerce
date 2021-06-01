@@ -27,6 +27,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'sold' %}">Items Sold</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'bought' %}">Items bought</a>
+                </li>
             {% endif %}
             {% if user.is_authenticated %}
                 <li class="nav-item">

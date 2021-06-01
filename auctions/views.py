@@ -23,6 +23,16 @@ def index(request):
 def create(request) :
     return render(request , "auctions/create.html")
 
+def sold(request) :
+    return render (request , "auctions/sold.html" , {
+        "listings" : Listing.objects.filter(owner=request.user.username , status = "true") 
+    })
+
+def bought(request) :
+    return render (request , "auctions/bought.html" , {
+        "listings" : Listing.objects.filter(buyer=request.user.username , status = "true") 
+    })
+
 def bid(request , listing_id ):
     listing = Listing.objects.get(id=listing_id)
 
@@ -51,7 +61,14 @@ def bid(request , listing_id ):
             watchlist.delete()
             return HttpResponseRedirect(reverse(index))
 
-    print(listing.price)
+        if 'close' in request.POST : 
+            listing.status = "true" 
+            listing.save()
+            return render (request , "auctions/sold.html" , {
+                "listings" : Listing.objects.filter(owner=request.user.username , status = "true") 
+            })
+
+
     return render (request , "auctions/bid.html" , {
         "listing" : listing
     })

@@ -4,6 +4,9 @@
     <h2>Active Listings</h2>
 
         {% for listing in listings %}
+
+        {% if listing.status == 'false' %}
+        
             <div style="background-color: rgb(220, 235, 255); margin: 30px; padding: 5px;">
             <ul>
                 {% if user.is_authenticated %}
@@ -12,7 +15,7 @@
                         <h5>Your item</h5>
                     {% endif %}
                 {% endif %}
-                <li><strong>{{listing.title}}</strong></li>
+                <li><h3><strong>{{listing.title}}</strong></h3></li>
                 <li>{{listing.details}}</li>  
                 <li><h6>Price : <span class="badge badge-secondary">$ {{listing.price}}</span></h6></li>
                 {% if user.is_authenticated %}
@@ -59,6 +62,7 @@
 
                 {% endif %}
             </ul>
-            </div>    
+            </div>   
+        {% endif %} 
         {% endfor %}
 {% endblock %}
