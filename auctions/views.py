@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User , Listing , Watchlist 
+from .models import User , Listing , Watchlist , Comment
 
 
 def index(request):
@@ -68,9 +68,15 @@ def bid(request , listing_id ):
                 "listings" : Listing.objects.filter(owner=request.user.username , status = "true") 
             })
 
+        if 'comment_submit' in request.POST :
+            comment = Comment(item=Listing.objects.get(id=listing_id),content = request.POST["content"])
+            comment.save()
+            return render( request , "auctions/bid.html" , {
+                "listing" : listing , "comments" : Comment.objects.filter(item=listing) 
+            })
 
     return render (request , "auctions/bid.html" , {
-        "listing" : listing
+        "listing" : listing , "comments" : Comment.objects.filter(item=listing)
     })
 
 def watchlist(request):

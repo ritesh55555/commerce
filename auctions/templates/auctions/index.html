@@ -3,66 +3,150 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-        {% for listing in listings %}
+    {% if user.is_authenticated %}
 
-        {% if listing.status == 'false' %}
+
+    {% for listing in listings %}
+
+    {% if listing.status == 'false' %}
+        <a href="{% url 'bid' listing.id %}" style="text-decoration: none;color: black;">
+        <div style="background-color: rgb(220, 235, 255); margin: 30px; padding: 5px;">
+        <ul>
+            {% if user.is_authenticated %}
+
+                {% if listing.owner == user.username %} 
+                    <h5>Your item</h5>
+                {% endif %}
+            {% endif %}
+            <li><h3><strong>{{listing.title}}</strong></h3></li>
+            <li>{{listing.details}}</li>  
+            <li><h6>Price : <span class="badge badge-secondary">$ {{listing.price}}</span></h6></li>
+            {% if user.is_authenticated %}
+
+                {% if listing.owner == user.username %} 
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <form action="{% url 'bid' listing.id %}" method="post">
+                            {% csrf_token %}
+                            {% if listing.buyer != 'none'%}
+                                <input class="btn btn-primary" type="submit" name="close" value="Sell" style="height: 35px;">
+                            {% endif%}
+                            <input class="btn btn-primary" type="submit" name="remove" value="Remove" style="height: 35px;">
+                            
+                            {% if listing.id in check %}
+                                <input class="btn btn-primary" type="submit"  value="Added" style="height: 35px; margin-left: 1050px;">
+                            {% else %}
+                                <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px; margin-left: 1050px;">
+                            {% endif %}
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <form action="{% url 'bid' listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input class="btn btn-primary" type="submit"  value="Bid" style="height: 35px;">
+                            {% if listing.id in check %}
+                                <input class="btn btn-primary" type="submit"  value="Added" style="height: 35px; margin-left: 1050px;">
+                            {% else %}
+                                <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px; margin-left: 1050px;">
+                            {% endif %}
+                        </form>
+                    </div>
+                {% endif %}
+
+                {% if listing.buyer == 'none'%}
+                    <div>
+                        <strong>No bid on this item</strong>
+                    </div>
+                {% elif listing.buyer == user.username %}
+                    <div>
+                        <strong>You are currently the highest bidder</strong>
+                    </div>
+                {% endif%}
+
+            {% endif %}
+        </ul>
+        </div>  
+        </a> 
+    {% endif %} 
+    {% endfor %}
+
+
+
+
+    {% else %}
+
+
+    {% for listing in listings %}
+
+    {% if listing.status == 'false' %}
         
-            <div style="background-color: rgb(220, 235, 255); margin: 30px; padding: 5px;">
-            <ul>
-                {% if user.is_authenticated %}
+        <div style="background-color: rgb(220, 235, 255); margin: 30px; padding: 5px;">
+        <ul>
+            {% if user.is_authenticated %}
 
-                    {% if listing.owner == user.username %} 
-                        <h5>Your item</h5>
-                    {% endif %}
+                {% if listing.owner == user.username %} 
+                    <h5>Your item</h5>
                 {% endif %}
-                <li><h3><strong>{{listing.title}}</strong></h3></li>
-                <li>{{listing.details}}</li>  
-                <li><h6>Price : <span class="badge badge-secondary">$ {{listing.price}}</span></h6></li>
-                {% if user.is_authenticated %}
+            {% endif %}
+            <li><h3><strong>{{listing.title}}</strong></h3></li>
+            <li>{{listing.details}}</li>  
+            <li><h6>Price : <span class="badge badge-secondary">$ {{listing.price}}</span></h6></li>
+            {% if user.is_authenticated %}
 
-                    {% if listing.owner == user.username %} 
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <form action="{% url 'bid' listing.id %}" method="post">
-                                {% csrf_token %}
-                                {% if listing.buyer != 'none'%}
-                                    <input class="btn btn-primary" type="submit" name="close" value="Sell" style="height: 35px;">
-                                {% endif%}
-                                <input class="btn btn-primary" type="submit" name="remove" value="Remove" style="height: 35px;">
-                                
-                                {% if listing.id in check %}
-                                    <input class="btn btn-primary" type="submit"  value="Added" style="height: 35px; margin-left: 1050px;">
-                                {% else %}
-                                    <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px; margin-left: 1050px;">
-                                {% endif %}
-                            </form>
-                        </div>
-                    {% else %}
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <form action="{% url 'bid' listing.id %}" method="post">
-                                {% csrf_token %}
-                                <input class="btn btn-primary" type="submit"  value="Bid" style="height: 35px;">
-                                {% if listing.id in check %}
-                                    <input class="btn btn-primary" type="submit"  value="Added" style="height: 35px; margin-left: 1050px;">
-                                {% else %}
-                                    <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px; margin-left: 1050px;">
-                                {% endif %}
-                            </form>
-                        </div>
-                    {% endif %}
-
-                    {% if listing.buyer == 'none'%}
-                        <div>
-                            <strong>No bid on this item</strong>
-                        </div>
-                    {% elif listing.buyer == user.username %}
-                        <div>
-                            <strong>You are currently the highest bidder</strong>
-                        </div>
-                    {% endif%}
-
+                {% if listing.owner == user.username %} 
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <form action="{% url 'bid' listing.id %}" method="post">
+                            {% csrf_token %}
+                            {% if listing.buyer != 'none'%}
+                                <input class="btn btn-primary" type="submit" name="close" value="Sell" style="height: 35px;">
+                            {% endif%}
+                            <input class="btn btn-primary" type="submit" name="remove" value="Remove" style="height: 35px;">
+                            
+                            {% if listing.id in check %}
+                                <input class="btn btn-primary" type="submit"  value="Added" style="height: 35px; margin-left: 1050px;">
+                            {% else %}
+                                <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px; margin-left: 1050px;">
+                            {% endif %}
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <form action="{% url 'bid' listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input class="btn btn-primary" type="submit"  value="Bid" style="height: 35px;">
+                            {% if listing.id in check %}
+                                <input class="btn btn-primary" type="submit"  value="Added" style="height: 35px; margin-left: 1050px;">
+                            {% else %}
+                                <input class="btn btn-primary" type="submit" name="add" value="Add to watchlist" style="height: 35px; margin-left: 1050px;">
+                            {% endif %}
+                        </form>
+                    </div>
                 {% endif %}
-            </ul>
-            </div>   
-        {% endif %} 
-        {% endfor %}
+
+                {% if listing.buyer == 'none'%}
+                    <div>
+                        <strong>No bid on this item</strong>
+                    </div>
+                {% elif listing.buyer == user.username %}
+                    <div>
+                        <strong>You are currently the highest bidder</strong>
+                    </div>
+                {% endif%}
+
+            {% endif %}
+        </ul>
+        </div>  
+        
+    {% endif %} 
+    {% endfor %}
+
+
+
+
+
+
+
+    {% endif %}
+
+        
 {% endblock %}
